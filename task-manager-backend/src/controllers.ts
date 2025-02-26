@@ -17,6 +17,7 @@ export const getTasks = (req: Request, res: Response, next: NextFunction): void 
   }
 };
 
+
 /**
  * Get a single task by ID
  */
@@ -38,50 +39,92 @@ export const getTaskById = (req: Request, res: Response, next: NextFunction): vo
  */
 export const createTask = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    const { title, description, category } = req.body;
+    let { title, description = "", category, status, dueDate = null } = req.body;
+
+    console.log("Received:", req.body); // Debugging
+
     if (!title || !category) {
       res.status(400).json({ message: "Title and category are required" });
       return;
     }
 
+    if (!["To Do", "In Progress", "Done", "Timeout"].includes(category)) {
+      res.status(400).json({ message: "Invalid category" });
+      return;
+    }
+
+    // Force category and status to be the same
+    status = category;
+
     const createdAt = new Date().toISOString();
     const stmt = db.prepare(
-      "INSERT INTO tasks (title, description, category, createdAt) VALUES (?, ?, ?, ?)"
+      "INSERT INTO tasks (title, description, category, status, dueDate, createdAt) VALUES (?, ?, ?, ?, ?, ?)"
     );
-    const result = stmt.run(title, description, category, createdAt);
+    const result = stmt.run(title, description, category, status, dueDate, createdAt);
 
-    res.status(201).json({ id: result.lastInsertRowid, title, description, category, createdAt });
+    res.status(201).json({ id: result.lastInsertRowid, title, description, category, status, dueDate, createdAt });
   } catch (error) {
     next(error);
   }
 };
+
+
+
 
 /**
  * Update an existing task
  */
 export const updateTask = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    const { title, description, category } = req.body;
-    if (!title || !category) {
-      res.status(400).json({ message: "Title and category are required" });
-      return;
-    }
+    const { title, description, category, dueDate } = req.body;
 
-    const stmt = db.prepare(
-      "UPDATE tasks SET title = ?, description = ?, category = ? WHERE id = ?"
-    );
-    const result = stmt.run(title, description, category, req.params.id);
+    // Fetch existing task from the database
+    const existingTask = db.prepare("SELECT * FROM tasks WHERE id = ?").get(req.params.id) as {
+      title: string;
+      description: string;
+      category: string;
+      dueDate?: string;
+    } | undefined;
 
-    if (result.changes === 0) {
+    if (!existingTask) {
       res.status(404).json({ message: "Task not found" });
       return;
     }
 
-    res.json({ id: req.params.id, title, description, category });
+    // Use existing values if new ones are not provided
+    const updatedTitle = title !== undefined ? title : existingTask.title;
+    const updatedDescription = description !== undefined ? description : existingTask.description;
+    const updatedCategory = category !== undefined ? category : existingTask.category;
+    const updatedDueDate = dueDate !== undefined ? dueDate : existingTask.dueDate;
+
+    console.log(`🔄 Updating Task ${req.params.id}: ${updatedTitle}, ${updatedCategory}`);
+
+    // Update the task in the database
+    const stmt = db.prepare(
+      "UPDATE tasks SET title = ?, description = ?, category = ?, dueDate = ? WHERE id = ?"
+    );
+    const result = stmt.run(updatedTitle, updatedDescription, updatedCategory, updatedDueDate, req.params.id);
+
+    if (result.changes === 0) {
+      res.status(400).json({ message: "No changes made" });
+      return;
+    }
+
+    res.json({
+      id: req.params.id,
+      title: updatedTitle,
+      description: updatedDescription,
+      category: updatedCategory,
+      dueDate: updatedDueDate,
+    });
   } catch (error) {
     next(error);
   }
 };
+
+
+
+
 
 /**
  * Delete a task by ID
@@ -110,7 +153,7 @@ export const checkTaskTimeouts = (): void => {
     const now = new Date().toISOString();
 
     const updateStmt = db.prepare(
-      "UPDATE tasks SET category = 'Timeout' WHERE category != 'Timeout' AND datetime(createdAt, '+30 minutes') < datetime(?)"
+      "UPDATE tasks SET category = 'Timeout', status = 'Timeout' WHERE category != 'Timeout' AND datetime(createdAt, '+30 minutes') < datetime(?)"
     );
     const result = updateStmt.run(now);
 
@@ -119,6 +162,8 @@ export const checkTaskTimeouts = (): void => {
     console.error("❌ Error checking task timeouts:", error);
   }
 };
+
+
 
 /**
  * Fetch streaming data (e.g., Twitch API example)
