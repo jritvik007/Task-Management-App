@@ -1,21 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Task } from "../types/Task";
 import { Trash, Edit, Check, X } from "lucide-react"; // Import icons
 
 type TaskItemProps = {
   task: Task;
   onDelete: (taskId: number) => void;
-  onUpdate: (task: Task) => void;
+  onUpdate: (updatedTask: Task) => void;
 };
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, onDelete, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState({ ...task });
 
-  const handleSave = () => {
-    onUpdate(editedTask); // Update task in state
-    setIsEditing(false); // Exit edit mode
+  // Sync editedTask when task updates
+  useEffect(() => {
+    setEditedTask({ ...task });
+  }, [task]);
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/tasks/${task.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editedTask),
+      });
+  
+      const responseData = await response.json();
+      if (!response.ok) {
+        throw new Error("Failed to update task");
+      }
+  
+      onUpdate(responseData); // ✅ Update UI immediately
+      setIsEditing(false); 
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
   };
+  
+  
+  
+  
+  
+  
 
   const handleCancel = () => {
     setEditedTask({ ...task }); // Reset edits
@@ -79,13 +105,12 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onDelete, onUpdate }) => {
           <h3 className="font-bold">{task.title}</h3>
           <p className="text-gray-600">{task.description}</p>
 
-          {/* Fix Status Display */}
+          {/* Status Display */}
           <p className="text-sm text-blue-500 font-semibold">
-  Status: <span className="text-gray-800">{task.status}</span>
-</p>
+            Status: <span className="text-gray-800">{task.status}</span>
+          </p>
 
-
-          {/* Fix Due Date Display */}
+          {/* Due Date Display */}
           <p className="text-sm text-gray-500">
             Due:{" "}
             <span className="text-gray-800">

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Task } from "../types/Task";
-
 const API_URL = "http://localhost:5000/tasks";
+
 
 // Valid categories and statuses
 const validCategories = ["To Do", "In Progress", "Done", "Timeout"] as const;
@@ -61,20 +61,17 @@ export const updateTask = async (task: Task): Promise<Task> => {
   try {
     const updatedTask = {
       ...task,
-      category: validCategories.includes(task.category) ? task.category : "To Do", // Ensure category is valid
-      dueDate: task.dueDate ? new Date(task.dueDate).toISOString() : null, // Ensure proper date format
+      category: validCategories.includes(task.category) ? task.category : "To Do",
+      dueDate: task.dueDate ? new Date(task.dueDate).toISOString() : null,
     };
 
-    const res = await axios.put(`${API_URL}/${task.id}`, updatedTask);
+    const res = await axios.put(`${API_URL}/tasks/${task.id}`, updatedTask);
 
-    return {
-      ...res.data,
-      status: res.data.category, // Ensure status matches category
-      dueDate: res.data.dueDate ? new Date(res.data.dueDate).toISOString() : null, // Convert back to ISO
-    };
+    return res.data; // Ensure you return the full updated task
   } catch (error) {
     console.error("Error updating task:", error);
     throw error;
   }
 };
+
 

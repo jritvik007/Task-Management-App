@@ -75,6 +75,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, existingTask }) => {
         onChange={(e) => setCategory(e.target.value as Task["category"])}
         className="w-full p-2 border rounded-md mb-2"
       >
+        
         <option value="To Do">To Do</option>
         <option value="In Progress">In Progress</option>
         <option value="Done">Done</option>

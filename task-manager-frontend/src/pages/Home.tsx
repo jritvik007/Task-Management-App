@@ -67,27 +67,33 @@ const Home = () => {
   // Handle updating a task
   const handleUpdateTask = async (updatedTask: Task) => {
     try {
-      const newTask = await updateTask(updatedTask);
-
-      // Ensure the task updates in state
-      setTasks((prev) =>
-        prev.map((task) => (task.id === newTask.id ? newTask : task))
+      const data = await updateTask(updatedTask); // ✅ Make API call
+  
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === updatedTask.id ? { ...task, ...data } : task
+        )
       );
     } catch (error) {
       console.error("Error updating task:", error);
     }
   };
+  
+  
+  
+  
+  
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Navbar */}
       <nav className="flex justify-between items-center bg-blue-600 p-4 text-white rounded-lg shadow-md mb-4">
-        <h1 className="text-xl font-bold">Task Manager</h1>
+        <h1 className="text-xl font-bold">Task Management App</h1>
         <div className="relative">
           <input
             type="text"
             placeholder="Search tasks..."
-            className="px-3 py-1 text-black rounded-md pl-8"
+            className="px-3 py-1 text-white rounded-md pl-8"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

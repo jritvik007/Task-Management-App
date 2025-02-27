@@ -17,7 +17,6 @@ export const getTasks = (req: Request, res: Response, next: NextFunction): void 
   }
 };
 
-
 /**
  * Get a single task by ID
  */
@@ -41,8 +40,6 @@ export const createTask = (req: Request, res: Response, next: NextFunction): voi
   try {
     let { title, description = "", category, status, dueDate = null } = req.body;
 
-    console.log("Received:", req.body); // Debugging
-
     if (!title || !category) {
       res.status(400).json({ message: "Title and category are required" });
       return;
@@ -53,9 +50,7 @@ export const createTask = (req: Request, res: Response, next: NextFunction): voi
       return;
     }
 
-    // Force category and status to be the same
     status = category;
-
     const createdAt = new Date().toISOString();
     const stmt = db.prepare(
       "INSERT INTO tasks (title, description, category, status, dueDate, createdAt) VALUES (?, ?, ?, ?, ?, ?)"
@@ -68,9 +63,6 @@ export const createTask = (req: Request, res: Response, next: NextFunction): voi
   }
 };
 
-
-
-
 /**
  * Update an existing task
  */
@@ -78,12 +70,11 @@ export const updateTask = (req: Request, res: Response, next: NextFunction): voi
   try {
     const { title, description, category, dueDate } = req.body;
 
-    // Fetch existing task from the database
     const existingTask = db.prepare("SELECT * FROM tasks WHERE id = ?").get(req.params.id) as {
       title: string;
       description: string;
       category: string;
-      dueDate?: string;
+      dueDate?: string | null;
     } | undefined;
 
     if (!existingTask) {
@@ -91,15 +82,11 @@ export const updateTask = (req: Request, res: Response, next: NextFunction): voi
       return;
     }
 
-    // Use existing values if new ones are not provided
     const updatedTitle = title !== undefined ? title : existingTask.title;
     const updatedDescription = description !== undefined ? description : existingTask.description;
     const updatedCategory = category !== undefined ? category : existingTask.category;
     const updatedDueDate = dueDate !== undefined ? dueDate : existingTask.dueDate;
 
-    console.log(`🔄 Updating Task ${req.params.id}: ${updatedTitle}, ${updatedCategory}`);
-
-    // Update the task in the database
     const stmt = db.prepare(
       "UPDATE tasks SET title = ?, description = ?, category = ?, dueDate = ? WHERE id = ?"
     );
@@ -121,10 +108,6 @@ export const updateTask = (req: Request, res: Response, next: NextFunction): voi
     next(error);
   }
 };
-
-
-
-
 
 /**
  * Delete a task by ID
@@ -151,7 +134,6 @@ export const deleteTask = (req: Request, res: Response, next: NextFunction): voi
 export const checkTaskTimeouts = (): void => {
   try {
     const now = new Date().toISOString();
-
     const updateStmt = db.prepare(
       "UPDATE tasks SET category = 'Timeout', status = 'Timeout' WHERE category != 'Timeout' AND datetime(createdAt, '+30 minutes') < datetime(?)"
     );
@@ -163,10 +145,8 @@ export const checkTaskTimeouts = (): void => {
   }
 };
 
-
-
 /**
- * Fetch streaming data (e.g., Twitch API example)
+ * Fetch streaming data from Twitch API
  */
 export const getStreamingData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -179,6 +159,7 @@ export const getStreamingData = async (req: Request, res: Response, next: NextFu
 
     res.json(response.data);
   } catch (error) {
-    next(error);
+    console.error("Error fetching Twitch data:", error);
+    res.status(500).json({ message: "Failed to fetch streaming data" });
   }
 };
