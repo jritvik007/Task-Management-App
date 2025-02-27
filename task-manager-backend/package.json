@@ -4,8 +4,7 @@
   "description": "Task Management Backend with Express & TypeScript",
   "main": "dist/server.js",
   "scripts": {
-    "start": "nodemon dist/server.js",
-    
+    "start": "node dist/server.js",
     "build": "tsc"
   },
   "keywords": [],
