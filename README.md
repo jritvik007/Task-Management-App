@@ -87,6 +87,7 @@ Ensure you have the following installed:
 Clone the Repository
 
 https://github.com/jritvik007/Task-Management-App.git
+
 cd task-manager
 
 Backend Setup
