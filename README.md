@@ -8,71 +8,69 @@ Features
 
 Frontend
 
-Task List: Displays a list of all tasks.
+1. Task List: Displays a list of all tasks.
 
-Task Item: Shows individual task details.
+2. Task Item: Shows individual task details.
 
-Task Form: Allows users to add and edit tasks with proper validation.
+3. Task Form: Allows users to add and edit tasks with proper validation.
 
-Category Slider: Enables users to switch between different task categories ("To Do", "In Progress", "Done", "Timeout").
+4. Category Slider: Enables users to switch between different task categories ("To Do", "In Progress", "Done", "Timeout").
 
-State Management: Utilizes React hooks or Context API for efficient state handling.
+5. State Management: Utilizes React hooks or Context API for efficient state handling.
 
-API Integration: Fetches task data using async/await with proper error handling.
+6. API Integration: Fetches task data using async/await with proper error handling.
 
-Timeout Handling: Automatically moves overdue tasks to the "Timeout" category.
+7. Timeout Handling: Automatically moves overdue tasks to the "Timeout" category.
 
 User Experience Enhancements:
 
-Error messages for failed API calls.
+1. Error messages for failed API calls.
 
-Responsive and accessible design using tailwind CSS.
+2. Responsive and accessible design using tailwind CSS.
 
 Backend
 
 Endpoints:
 
-GET /tasks - Fetch all tasks.
+1. GET /tasks - Fetch all tasks.
 
-GET /tasks/:id - Fetch a specific task by ID.
+2. GET /tasks/:id - Fetch a specific task by ID.
 
-POST /tasks - Create a new task.
+3. POST /tasks - Create a new task.
 
-PUT /tasks/:id - Update an existing task.
+4. PUT /tasks/:id - Update an existing task.
 
-DELETE /tasks/:id - Remove a task.
+5. DELETE /tasks/:id - Remove a task.
 
-GET /streaming - Fetch real-time data from a streaming API
+6. GET /streaming - Fetch real-time data from a streaming API
 
-Database: Used an in-memory database SQLite.
+7. Database: Used an in-memory database SQLite.
 
-Error Handling: Implements robust error validation for API requests.
+8. Error Handling: Implements robust error validation for API requests.
 
-Async Challenge: Fetches additional data from an external streaming API and integrates it with task details.
+9. Async Challenge: Fetches additional data from an external streaming API and integrates it with task details.
 
 Tech Stack
 
 Frontend
 
-Framework: React with TypeScript
+1. Framework: React with TypeScript
 
-Styling: Tailwind CSS
+2. Styling: Tailwind CSS
 
-State Management: React hooks / Context API
+3. State Management: React hooks / Context API
 
-Form Handling: Controlled components with validation
+4. Form Handling: Controlled components with validation
 
-API Requests: Fetch API / Axios
+5. API Requests: Fetch API / Axios
 
 Backend
 
-Framework: Node.js with Express and TypeScript
+1. Framework: Node.js with Express and TypeScript
 
-Database: SQLite
+2. Database: SQLite
 
-Streaming API: Twitch API
-
-Installation and Setup
+3. Streaming API: Twitch API
 
 Installation and Setup
 
@@ -80,16 +78,50 @@ Prerequisites
 
 Ensure you have the following installed:
 
-Node.js (>=14.x)
+1. Node.js (>=14.x)
 
-npm
+2. npm
 
-SQLite
-
+3. SQLite
 
 Clone the Repository
-git clone https://github.com/jritvik007/.git
+
+https://github.com/jritvik007/Task-Management-App.git
 cd task-manager
+
+Backend Setup
+
+1. Navigate to the backend folder:
+
+cd task-manager-backend
+
+2. Install dependencies:
+
+npm install
+
+3. Start the backend server:
+
+npm run dev
+
+Frontend Setup
+
+1. Navigate to the frontend folder:
+
+cd task-manager-frontend
+
+2. Install dependencies:
+
+npm install
+
+3. Start the frontend development server:
+
+npm run dev
+
+Live Demo
+
+Frontend: Live Demo Link
+
+Backend API: Live API Link
 
 
 
