@@ -118,11 +118,12 @@ npm install
 
 npm run dev
 
-Live Demo
+Live Frontend Demo Link
 
-Frontend: Live Demo Link
+task-management-app-gray-nine.vercel.app
 
-Backend API: Live API Link
+
+
 
 
 
